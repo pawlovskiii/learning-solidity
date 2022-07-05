@@ -40,18 +40,29 @@ contract Ballot {
         }
     }
 
-    function giveRightToVote(address voter) external {
+    /*
+        Example of account addresses from remix IDE to give the right to vote by the chairperson:
+
+        ["0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2", 
+         "0x4B20993Bc481177ec7E8f571ceCaE8A9e22C02db",
+         "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB"]
+    */ 
+
+    function giveRightToVote(address[] memory votersList) external {
 
         require(
             msg.sender == chairperson,
             "Only chairperson can give right to vote."
         );
-        require(
-            !voters[voter].voted,
-            "The voter already voted."
-        );
-        require(voters[voter].weight == 0);
-        voters[voter].weight = 1;
+
+        for (uint i = 0; i < votersList.length; i++) {
+            require(
+                !voters[votersList[i]].voted,
+                "The voter already voted."
+            );
+            require(voters[votersList[i]].weight == 0);
+            voters[votersList[i]].weight = 1;
+        }
     }
 
     
@@ -133,3 +144,4 @@ contract Ballot {
         winnerName_ = proposals[winningProposal()].name;
     }
 }
+
