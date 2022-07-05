@@ -14,8 +14,14 @@ contract Coin {
         minter = msg.sender;
     }
 
-    function mint(address receiver, uint amount) public {
-        require(msg.sender == minter);
+    modifier onlyMinter {
+        require
+            (msg.sender == minter,
+             "The only contract owner can create new coins");
+        _;
+    }
+
+    function mint(address receiver, uint amount) onlyMinter public {
         balances[receiver] += amount;
     }
 
