@@ -19,6 +19,11 @@ contract Ballot {
     mapping(address => Voter) public voters;
     Proposal[] public proposals;
 
+    modifier onlyChairperson {
+        require(msg.sender == chairperson, "Only chairperson can give right to vote.");
+        _;
+    }
+
     /*
         Example of proposal names for the constructor to deploy the contract (A, B, C):
 
@@ -48,12 +53,7 @@ contract Ballot {
          "0x78731D3Ca6b7E34aC0F824c42a7cC18A495cabaB"]
     */ 
 
-    function giveRightToVote(address[] memory votersList) external {
-
-        require(
-            msg.sender == chairperson,
-            "Only chairperson can give right to vote."
-        );
+    function giveRightToVote(address[] memory votersList) onlyChairperson external {
 
         for (uint i = 0; i < votersList.length; i++) {
             require(
@@ -145,3 +145,4 @@ contract Ballot {
         winnerName_ = proposals[winningProposal()].name;
     }
 }
+
