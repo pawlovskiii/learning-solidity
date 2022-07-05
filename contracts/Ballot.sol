@@ -90,25 +90,20 @@ contract Ballot {
 
         Voter storage delegate_ = voters[to];
 
-        // Voters cannot delegate to accounts that cannot vote.
         require(delegate_.weight >= 1);
 
-        // Since 'sender' is a reference, this modifies 'voters[msg.sender]'.
         Voter storage sender = voters[msg.sender];
         sender.voted = true;
         sender.delegate = to;
 
         if (delegate_.voted) {
-            // If the delegate already voted, directly add to the number of votes
             proposals[delegate_.vote].voteCount += sender.weight;
         } else {
-            // If the delegate did not vote yet, add to her weight.
             delegate_.weight += sender.weight;
         }
     }
 
-    // Give your vote (including votes delegated to you)
-    // to proposal 'proposals[proposal].name'
+
     function vote(uint proposal) voteCheck external {
 
         Voter storage sender = voters[msg.sender];
@@ -116,13 +111,10 @@ contract Ballot {
         sender.voted = true;
         sender.vote = proposal;
 
-        // If 'proposal' is out of the range of the array,
-        // this will throw automatically and revert all changes.
         proposals[proposal].voteCount += sender.weight;
     }
 
-    // @dev Computes the winning proposal taking all
-    // previous votes into account.
+
     function winningProposal() public view returns (uint winningProposal_) {
 
         uint winningVoteCount = 0;
@@ -135,9 +127,7 @@ contract Ballot {
         }
     }
 
-    // Calls winningProposal() function to get the index
-    // of the winner contained in the proposals array and then
-    // returns the name of the winner
+    
     function winnerName() external view returns (string memory winnerName_) {
         winnerName_ = proposals[winningProposal()].name;
     }
