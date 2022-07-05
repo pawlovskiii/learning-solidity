@@ -24,6 +24,13 @@ contract Ballot {
         _;
     }
 
+    modifier voteCheck {
+        Voter storage sender = voters[msg.sender];
+        require(sender.weight != 0, "You have no right to vote!");
+        require(!sender.voted, "You already voted!");
+        _;
+    }
+
     /*
         Example of proposal names for the constructor to deploy the contract (A, B, C):
 
@@ -66,12 +73,7 @@ contract Ballot {
     }
 
     
-    function delegate(address to) external {
-
-        // assigns reference
-        Voter storage sender = voters[msg.sender];
-        require(sender.weight != 0, "You have no right to vote!");
-        require(!sender.voted, "You already voted!");
+    function delegate(address to) voteCheck external {
 
         require(to != msg.sender, "Self-delegation is disallowed!");
 
@@ -95,6 +97,7 @@ contract Ballot {
         require(delegate_.weight >= 1);
 
         // Since 'sender' is a reference, this modifies 'voters[msg.sender]'.
+        Voter storage sender = voters[msg.sender];
         sender.voted = true;
         sender.delegate = to;
 
@@ -109,12 +112,9 @@ contract Ballot {
 
     // Give your vote (including votes delegated to you)
     // to proposal 'proposals[proposal].name'
-    function vote(uint proposal) external {
+    function vote(uint proposal) voteCheck external {
 
         Voter storage sender = voters[msg.sender];
-
-        require(sender.weight != 0, "Has no right to vote");
-        require(!sender.voted, "Already voted.");
 
         sender.voted = true;
         sender.vote = proposal;
@@ -145,4 +145,3 @@ contract Ballot {
         winnerName_ = proposals[winningProposal()].name;
     }
 }
-
