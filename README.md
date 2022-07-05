@@ -6,4 +6,4 @@
 
 ## General info
 
-The whole repository consists of several contracts from Solidity documentation, which I deeply rework to understand every detail.
+The whole repository consists of several contracts from Solidity documentation which I deeply rework to understand every detail. After that, I tried to refactor the code or add additional functionality to improve it.
