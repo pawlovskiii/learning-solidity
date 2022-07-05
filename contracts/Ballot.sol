@@ -11,7 +11,7 @@ contract Ballot {
     }
 
     struct Proposal {
-        bytes32 name; 
+        string name; 
         uint voteCount; 
     }
 
@@ -34,12 +34,10 @@ contract Ballot {
     /*
         Example of proposal names for the constructor to deploy the contract (A, B, C):
 
-        ["0x50726f706f73616c204100000000000000000000000000000000000000000000", 
-         "0x50726f706f73616c204200000000000000000000000000000000000000000000",
-         "0x50726f706f73616c204300000000000000000000000000000000000000000000"]
+        ["proposal_A", "proposal_B", "proposal_C"]
     */ 
 
-    constructor(bytes32[] memory proposalNames) {
+    constructor(string[] memory proposalNames) {
         chairperson = msg.sender;
         voters[chairperson].weight = 1;
 
@@ -89,7 +87,6 @@ contract Ballot {
             // We found a loop in the delegation, not allowed.
             require(to != msg.sender, "Found loop in delegation.");
         }
-
 
         Voter storage delegate_ = voters[to];
 
@@ -141,7 +138,7 @@ contract Ballot {
     // Calls winningProposal() function to get the index
     // of the winner contained in the proposals array and then
     // returns the name of the winner
-    function winnerName() external view returns (bytes32 winnerName_) {
+    function winnerName() external view returns (string memory winnerName_) {
         winnerName_ = proposals[winningProposal()].name;
     }
 }
