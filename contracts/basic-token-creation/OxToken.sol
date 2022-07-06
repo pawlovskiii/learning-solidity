@@ -12,8 +12,12 @@ contract OxToken {
         balances[msg.sender] = totalSupply;
     }
 
-    function transfer(address to, uint amount) external {
+    modifier amountCheck(uint amount) {
         require(balances[msg.sender] >= amount, "Not enough tokens");
+        _;
+    }
+
+    function transfer(address to, uint amount) amountCheck(amount) external {
         balances[msg.sender] -= amount;
         balances[to] += amount;
     }
