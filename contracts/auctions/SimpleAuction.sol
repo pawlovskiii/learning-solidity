@@ -90,7 +90,7 @@ contract SimpleAuction {
 
         // 1. Conditions
         if (block.timestamp < auctionEndTime)
-            revert AuctionAlreadyEnded();
+            revert AuctionNotYetEnded();
         if (ended)
             revert AuctionEndAlreadyCalled();
         
