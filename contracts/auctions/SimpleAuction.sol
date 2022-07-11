@@ -9,7 +9,6 @@ contract SimpleAuction {
     address public highestBidder;
     uint public highestBid;
 
-    // Allowed withdrawals of previous bids
     mapping(address => uint) pendingReturns;
 
     bool ended;
@@ -17,10 +16,6 @@ contract SimpleAuction {
     // Events that will be emitted on changes.
     event HighestBigIncreased(address bidder, uint amount);
     event AuctionEnded(address winner, uint amount);
-
-    // The triple-slash comments are so-called natspec comments.
-    // They will be shown when the user is asked to 
-    // confirm a transaction or when an error is displayed.
 
     /// The auction has already ended.
     error AuctionAlreadyEnded();
@@ -38,24 +33,13 @@ contract SimpleAuction {
 
     function bid() external payable {
 
-        // Revert the call if the bidding 
-        // period is over.
         if (block.timestamp > auctionEndTime)
             revert AuctionAlreadyEnded();
         
-        // If the bid is not higher, send the
-        // money back (the revert statement
-        // will revert all changes in this function
-        // execution including it having received the money.
         if (msg.value <= highestBid)
             revert BidNotHighEnough(highestBid);
         
         if (highestBid != 0) {
-            // Sending back the money by simply using
-            // highestBidder.send(highestBid) is a security risk
-            // because it could execute an untrusted contract.
-            // It is always safer to let the recipients
-            // withdraw their moeny themselves.
             pendingReturns[highestBidder] += highestBid;
         }
         highestBidder = msg.sender;
@@ -63,7 +47,6 @@ contract SimpleAuction {
         emit HighestBigIncreased(msg.sender, msg.value);
     }
 
-    /// Withdraw a bid that was overbid.
     function withdraw() external returns (bool) {
         uint amount = pendingReturns[msg.sender];
         if (amount > 0) {
