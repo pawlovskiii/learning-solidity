@@ -4,6 +4,7 @@ pragma solidity ^0.8.4;
 contract SimpleAuction {
 
     address payable public beneficiary;
+    address public owner;
     uint public auctionEndTime;
 
     address public highestBidder;
@@ -26,7 +27,13 @@ contract SimpleAuction {
     /// The function auctionEnd has already been called.
     error AuctionEndAlreadyCalled();
 
+    modifier onlyOwner {
+        require(msg.sender == owner, "Only the owner can end the auction!");
+        _;
+    }
+
     constructor(uint biddingTime, address payable beneficiaryAddress) {
+        owner = msg.sender;
         beneficiary = beneficiaryAddress;
         auctionEndTime = block.timestamp + biddingTime;
     }
@@ -67,7 +74,7 @@ contract SimpleAuction {
         return true;
     }
 
-    function auctionEnd() external {
+    function auctionEnd() onlyOwner external {
         // It is a good guideline to structure functions that interact 
         // with other contracts (i.e. they call functions or send Ether)
         // into three phases:
