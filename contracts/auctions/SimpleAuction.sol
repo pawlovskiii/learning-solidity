@@ -28,7 +28,7 @@ contract SimpleAuction {
     error AuctionEndAlreadyCalled();
 
     modifier onlyOwner {
-        require(msg.sender == owner, "Only the owner can end the auction!");
+        require(msg.sender == owner, "Only the owner can check the status of the auction!");
         _;
     }
 
