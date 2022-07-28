@@ -48,6 +48,10 @@ contract BlindAuction {
         revealEnd = biddingEnd + revealTime;
     }
 
+    function generateBlindedBidBytes32(uint256 value, bool fake, bytes32 secret) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(value, fake, secret));
+    }
+
     function bid(bytes32 blindedBid) external payable onlyBefore(biddingEnd) {
         bids[msg.sender].push(Bid({
             blindedBid: blindedBid,
