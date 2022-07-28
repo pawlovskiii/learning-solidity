@@ -5,6 +5,7 @@ contract SimpleAuction {
 
     address payable public beneficiary;
     address public owner;
+    
     uint public auctionEndTime;
 
     address public highestBidder;
@@ -15,9 +16,10 @@ contract SimpleAuction {
     bool ended;
 
     // Events that will be emitted on changes.
-    event HighestBigIncreased(address bidder, uint amount);
+    event HighestBidIncreased(address bidder, uint amount);
     event AuctionEnded(address winner, uint amount);
-
+    event DeployingParameters(uint biddingTime, address payable beneficiaryAddress);
+    
     /// The auction has already ended.
     error AuctionAlreadyEnded();
     /// These is already a higher or equal bid.
@@ -28,7 +30,7 @@ contract SimpleAuction {
     error AuctionEndAlreadyCalled();
 
     modifier onlyOwner {
-        require(msg.sender == owner, "Only the owner can check the status of the auction!");
+        require(msg.sender == owner, "Only the owner can end the auction!");
         _;
     }
 
@@ -36,8 +38,15 @@ contract SimpleAuction {
         owner = msg.sender;
         beneficiary = beneficiaryAddress;
         auctionEndTime = block.timestamp + biddingTime;
+
+        emit DeployingParameters(biddingTime, beneficiaryAddress);
     }
 
+
+    /// Bid on the auction with the value sent
+    /// together with this transaction.
+    /// The value will only be refunded if the
+    /// auction is not won.
     function bid() external payable {
 
         if (block.timestamp > auctionEndTime)
@@ -51,7 +60,7 @@ contract SimpleAuction {
         }
         highestBidder = msg.sender;
         highestBid = msg.value;
-        emit HighestBigIncreased(msg.sender, msg.value);
+        emit HighestBidIncreased(msg.sender, msg.value);
     }
 
     function withdraw() external returns (bool) {
