@@ -32,13 +32,13 @@ contract BlindAuction {
     /// The function auctionEnd has already been called.
     error AuctionEndAlreadyCalled();
 
-    modifier onlyBefore(uint time) {
-        if (block.timestamp >= time) revert TooLate(time);
+    modifier onlyBefore(uint time) { 
+        require(block.timestamp <= time, "You're too late with the bid!");
         _;
     }
 
-    modifier onlyAfter(uint time) {
-        if (block.timestamp <= time) revert TooEarly(time);
+    modifier onlyAfter(uint time) { 
+        require(block.timestamp >= time, "You're too early and you can't reveal it yet!");
         _;
     }
 
